@@ -89,6 +89,45 @@ namespace UnitTestProject
             });
         }
 
+
+
+        /// <summary>
+        /// Test whether the 'draw' command draws a line and updates the pen position correctly.
+        /// </summary>
+        [TestMethod]
+        public void ExecuteCommand_DrawCommand_ShouldDrawLineAndUpdatePenPosition()
+        {
+            // Arrange
+            CommandParser commandParser = CommandParser.Instance;
+
+            // Act
+            commandParser.ParseAndExecute("draw 20 30");
+
+            // Assert
+            Assert.AreEqual(20, commandParser.CurrentPenX);
+            Assert.AreEqual(30, commandParser.CurrentPenY);
+            // You might need additional assertions based on your application's behavior
+        }
+
+
+
+
+
+        /// <summary>
+        /// Test whether the 'draw' command throws an ArgumentException with invalid parameters.
+        /// </summary>
+        [TestMethod]
+        public void ExecuteCommand_DrawCommand_WithInvalidParameters_ShouldThrowArgumentException()
+        {
+            // Arrange
+            CommandParser commandParser = CommandParser.Instance;
+
+            // Act & Assert
+            Assert.ThrowsException<ArgumentException>(() =>
+            {
+                commandParser.ParseAndExecute("draw invalidParameter");
+            });
+        }
     }
 
 

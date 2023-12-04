@@ -230,15 +230,20 @@ namespace Graphical_Language
 
             if (int.TryParse(words[1], out int x) && int.TryParse(words[2], out int y))
             {
-                // Draw a line from the current pen position to the specified coordinates
-                using (Graphics g = pictureBox.CreateGraphics())
+                if(pictureBox != null)
                 {
-                    g.DrawLine(new Pen(PenColor), CurrentPenX, CurrentPenY, x, y);
-                }
+                    // Draw a line from the current pen position to the specified coordinates
+                    using (Graphics g = pictureBox.CreateGraphics())
+                    {
+                        g.DrawLine(new Pen(PenColor), CurrentPenX, CurrentPenY, x, y);
+                    }
 
+                    
+                }
                 // Update pen position
                 CurrentPenX = x;
                 CurrentPenY = y;
+
             }
             else
             {
