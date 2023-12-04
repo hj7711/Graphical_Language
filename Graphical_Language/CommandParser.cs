@@ -50,7 +50,7 @@ namespace Graphical_Language
                     ExecutePositionCommand(words);
                     break;
                 case "pen":      
-                    //ExecutePenColorCommand(words);
+                    ExecutePenColorCommand(words);
                     break;
                 case "draw":
                     //ExecuteDrawCommand(words);
@@ -174,6 +174,28 @@ namespace Graphical_Language
 
         #endregion
 
+        #region PenColor Command
+
+        /// <summary>
+        /// Executes the 'pen' command, setting the pen color based on the specified color name.
+        /// </summary>
+        /// <param name="words">An array of words containing the command and its parameters.</param>
+        /// <exception cref="ArgumentException">Thrown when the command is invalid or has incorrect parameters.</exception>
+        private void ExecutePenColorCommand(string[] words)
+        {
+            if (words.Length < 2)
+            {
+                throw new ArgumentException("Invalid 'pen' command. Usage: pen <colour>");
+            }
+
+            // Parse color from the second word (assuming it's a valid color name)
+            string colorName = words[1].ToLower();
+            PenColor = Color.FromName(colorName);
+
+            DisplayMessage($"Pen color set to {colorName}");
+        }
+
+        #endregion
 
 
         private void DisplayMessage(string message)
