@@ -19,7 +19,8 @@ namespace Graphical_Language
 
         private void button1_Click(object sender, EventArgs e)
         {
-
+            string commandLine = textBox1.Text;
+            CommandParser.Instance.ParseAndExecute(commandLine);
         }
     }
 }
