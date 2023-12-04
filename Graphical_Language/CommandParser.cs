@@ -263,11 +263,15 @@ namespace Graphical_Language
         /// </remarks>
         private void ExecuteClearCommand()
         {
-            // Use the Refresh method to clear the drawing area
-            pictureBox.Refresh();
+            
+            if(pictureBox != null)
+            {
+                // Use the Refresh method to clear the drawing area
+                pictureBox.Refresh();
 
-            // Display a message indicating that the drawing area has been cleared
-            DisplayMessage("Drawing area cleared");
+                // Display a message indicating that the drawing area has been cleared
+                DisplayMessage("Drawing area cleared");
+            }
         }
 
         #endregion

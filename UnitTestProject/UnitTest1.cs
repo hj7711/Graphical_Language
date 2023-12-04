@@ -2,6 +2,7 @@
 using System;
 using Graphical_Language;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace UnitTestProject
 {
@@ -134,7 +135,22 @@ namespace UnitTestProject
 
 
 
-       
+        /// <summary>
+        /// Unit test for the ExecuteClearCommand method.
+        /// </summary>
+        [TestMethod]
+        public void ExecuteCommand_ClearCommand_ShouldClearDrawingArea()
+        {
+            CommandParser commandParser = CommandParser.Instance;
+            commandParser.pictureBox = new PictureBox(); // Initialize the PictureBox
+
+            // Act
+            commandParser.ParseAndExecute("clear");
+
+            // Assert - Check if the drawing area is cleared
+            Assert.IsTrue(commandParser.pictureBox.Image == null, "The drawing area is not cleared.");
+
+        }
 
     }
 
