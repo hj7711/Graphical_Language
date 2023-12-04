@@ -252,6 +252,25 @@ namespace UnitTestProject
             Assert.AreEqual(0, commandParser.CurrentPenY);
         }
 
+
+
+        /// <summary>
+        /// Test method to ensure that executing the 'circle' command with invalid parameters throws an ArgumentException.
+        /// </summary>
+        [TestMethod]
+        public void ExecuteCommand_CircleCommand_WithInvalidParameters_ShouldThrowArgumentException()
+        {
+            // Arrange
+            CommandParser commandParser = CommandParser.Instance;
+
+            // Act & Assert
+            Assert.ThrowsException<ArgumentException>(() =>
+            {
+                commandParser.ParseAndExecute("circle invalidParameter");
+            });
+        }
+
+
     }
 
 }
