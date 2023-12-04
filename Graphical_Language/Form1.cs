@@ -10,11 +10,16 @@ using System.Windows.Forms;
 
 namespace Graphical_Language
 {
-    public partial class Form1 : Form
+    public partial class Graphical_Language : Form
     {
-        public Form1()
+        public Graphical_Language()
         {
             InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
