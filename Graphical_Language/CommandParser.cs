@@ -190,11 +190,28 @@ namespace Graphical_Language
 
             // Parse color from the second word (assuming it's a valid color name)
             string colorName = words[1].ToLower();
-            PenColor = Color.FromName(colorName);
-
-            DisplayMessage($"Pen color set to {colorName}");
+            if (IsKnownColor(colorName))
+            {
+                PenColor = Color.FromName(colorName);
+                DisplayMessage($"Pen color set to {colorName}");
+            }
+            else
+            {
+                throw new ArgumentException($"Invalid 'pen' command. '{colorName}' is not a valid color.");
+            }
         }
 
+        private bool IsKnownColor(string colorName)
+        {
+            foreach (var knownColor in Enum.GetValues(typeof(KnownColor)))
+            {
+                if (Color.FromKnownColor((KnownColor)knownColor).Name.ToLower() == colorName)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
         #endregion
 
 

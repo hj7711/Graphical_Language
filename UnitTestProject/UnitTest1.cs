@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using Graphical_Language;
+using System.Drawing;
 
 namespace UnitTestProject
 {
@@ -45,7 +46,54 @@ namespace UnitTestProject
             });
         }
 
+
+
+
+
+
+        /// <summary>
+        /// Tests the <see cref="YourClass"/> class for the 'pen' command with valid parameters.
+        /// </summary>
+        [TestMethod]
+        public void TestExecutePenColorCommand_ValidCommand_ShouldSetPenColor()
+        {
+
+            // Arrange
+            CommandParser commandParser = CommandParser.Instance;
+            string validCommand = "pen red";
+
+            // Act
+            commandParser.ParseAndExecute(validCommand);
+
+            // Assert - Check the state of YourClass or other relevant objects
+            Assert.AreEqual(Color.Red, commandParser.PenColor);
+        }
+
+
+
+
+
+        /// <summary>
+        /// Tests the <see cref="CommandParser"/> class for the 'pen' command with an invalid color name.
+        /// </summary>
+        [TestMethod]
+        public void ExecuteCommand_PenCommand_InvalidColor_ShouldThrowArgumentException()
+        {
+            // Arrange
+            CommandParser commandParser = CommandParser.Instance;
+
+            // Act & Assert
+            Assert.ThrowsException<ArgumentException>(() =>
+            {
+                commandParser.ParseAndExecute("pen invalidcolor");
+            });
+        }
+
     }
+
+
+
+
 
 
 }
