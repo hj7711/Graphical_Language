@@ -7,6 +7,9 @@ namespace UnitTestProject
     [TestClass]
     public class UnitTest1
     {
+        /// <summary>
+        /// Tests the <see cref="CommandParser"/> class for the 'position' command with valid parameters.
+        /// </summary>
         [TestMethod]
         public void TestPositionCommand_ValidCommand_ShouldSetPenPosition()
         {
@@ -21,6 +24,14 @@ namespace UnitTestProject
             Assert.AreEqual(20, commandParser.CurrentPenY);
         }
 
+
+
+
+
+
+        /// <summary>
+        /// Tests the <see cref="CommandParser"/> class for executing an invalid command, which should throw an <see cref="ArgumentException"/>.
+        /// </summary>
         [TestMethod]
         public void TestExecuteCommand_InvalidCommand_ShouldThrowArgumentException()
         {
@@ -33,7 +44,8 @@ namespace UnitTestProject
                 commandParser.ParseAndExecute("invalidcommand");
             });
         }
+
     }
 
-       
+
 }
