@@ -152,6 +152,62 @@ namespace UnitTestProject
 
         }
 
+
+
+
+
+
+        /// <summary>
+        /// Test method to ensure that executing the 'fill on' command sets the fill state to true.
+        /// </summary>
+        [TestMethod]
+        public void ExecuteCommand_FillCommand_TurnOnFill_ShouldSetFillStateToTrue()
+        {
+            // Arrange
+            CommandParser commandParser = CommandParser.Instance;
+
+            // Act
+            commandParser.ParseAndExecute("fill on");
+
+            // Assert
+            Assert.IsTrue(commandParser.FillEnabled, "Fill state should be true after 'fill on' command.");
+        }
+
+        /// <summary>
+        /// Test method to ensure that executing the 'fill off' command sets the fill state to false.
+        /// </summary>
+        [TestMethod]
+        public void ExecuteCommand_FillCommand_TurnOffFill_ShouldSetFillStateToFalse()
+        {
+            // Arrange
+            CommandParser commandParser = CommandParser.Instance;
+
+            // Act
+            commandParser.ParseAndExecute("fill off");
+
+            // Assert
+            Assert.IsFalse(commandParser.FillEnabled, "Fill state should be false after 'fill off' command.");
+        }
+
+        /// <summary>
+        /// Test method to ensure that executing the 'fill' command with an invalid fill state throws an ArgumentException.
+        /// </summary>
+        [TestMethod]
+        public void ExecuteCommand_FillCommand_InvalidFillState_ShouldThrowArgumentException()
+        {
+            // Arrange
+            CommandParser commandParser = CommandParser.Instance;
+
+            // Act & Assert
+            Assert.ThrowsException<ArgumentException>(() =>
+            {
+                commandParser.ParseAndExecute("fill invalidState");
+            });
+        }
+
+
+
+
     }
 
 
