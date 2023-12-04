@@ -13,8 +13,8 @@ namespace Graphical_Language
     public class CommandParser
     {
         private static CommandParser instance;
-        public int CurrentPenX { get; private set; } = 0;
-        public int CurrentPenY { get; private set; } = 0;
+        public int CurrentPenX { get;  set; } = 0;
+        public int CurrentPenY { get;  set; } = 0;
         public Color PenColor { get; set; } = Color.Black;
         public PictureBox pictureBox{ get; set;}
 
@@ -349,8 +349,6 @@ namespace Graphical_Language
         }
 
         #endregion
-
-
 
 
 

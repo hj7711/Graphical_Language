@@ -208,11 +208,23 @@ namespace UnitTestProject
 
 
 
+
+
+        /// <summary>
+        /// Test method to ensure that executing the 'rectangle' command with invalid parameters throws an ArgumentException.
+        /// </summary>
+        [TestMethod]
+        public void ExecuteCommand_RectangleCommand_WithInvalidParameters_ShouldThrowArgumentException()
+        {
+            // Arrange
+            CommandParser commandParser = CommandParser.Instance;
+
+            // Act & Assert
+            Assert.ThrowsException<ArgumentException>(() =>
+            {
+                commandParser.ParseAndExecute("rectangle invalidParameter");
+            });
+        }
     }
-
-
-
-
-
 
 }
