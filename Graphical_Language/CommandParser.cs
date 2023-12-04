@@ -53,7 +53,7 @@ namespace Graphical_Language
                     ExecutePenColorCommand(words);
                     break;
                 case "draw":
-                    //ExecuteDrawCommand(words);
+                    ExecuteDrawCommand(words);
                     break;
                 case "clear":
                     //ExecuteClearCommand();
@@ -213,6 +213,41 @@ namespace Graphical_Language
             return false;
         }
         #endregion
+
+        #region Draw Command
+
+        /// <summary>
+        /// Executes the 'draw' command, drawing a line from the current pen position to the specified coordinates.
+        /// </summary>
+        /// <param name="words">An array of words containing the command and its parameters.</param>
+        /// <exception cref="ArgumentException">Thrown when the command is invalid or has incorrect parameters.</exception>
+        private void ExecuteDrawCommand(string[] words)
+        {
+            if (words.Length < 3)
+            {
+                throw new ArgumentException("Invalid 'draw' command. Usage: draw <x> <y>");
+            }
+
+            if (int.TryParse(words[1], out int x) && int.TryParse(words[2], out int y))
+            {
+                // Draw a line from the current pen position to the specified coordinates
+                using (Graphics g = pictureBox.CreateGraphics())
+                {
+                    g.DrawLine(new Pen(PenColor), CurrentPenX, CurrentPenY, x, y);
+                }
+
+                // Update pen position
+                CurrentPenX = x;
+                CurrentPenY = y;
+            }
+            else
+            {
+                throw new ArgumentException("Invalid 'draw' command. Coordinates must be integers.");
+            }
+        }
+
+        #endregion
+
 
 
         private void DisplayMessage(string message)
