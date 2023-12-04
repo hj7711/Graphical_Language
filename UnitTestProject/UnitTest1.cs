@@ -225,6 +225,33 @@ namespace UnitTestProject
                 commandParser.ParseAndExecute("rectangle invalidParameter");
             });
         }
+
+
+
+
+
+
+        /// <summary>
+        /// Tests the 'reset' command, ensuring that the pen is moved to the initial position.
+        /// </summary>
+        [TestMethod]
+        public void ExecuteCommand_ResetCommand_ShouldMovePenToInitialPosition()
+        {
+            // Arrange
+            CommandParser commandParser = CommandParser.Instance;
+
+            // Set the current pen position to a non-initial position
+            commandParser.CurrentPenX = 50;
+            commandParser.CurrentPenY = 60;
+
+            // Act
+            commandParser.ParseAndExecute("reset");
+
+            // Assert
+            Assert.AreEqual(0, commandParser.CurrentPenX);
+            Assert.AreEqual(0, commandParser.CurrentPenY);
+        }
+
     }
 
 }
