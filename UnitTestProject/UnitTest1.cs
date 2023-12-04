@@ -271,6 +271,24 @@ namespace UnitTestProject
         }
 
 
+
+
+
+        /// <summary>
+        /// Test method to ensure that executing the 'triangle' command with invalid parameters throws an ArgumentException.
+        /// </summary>
+        [TestMethod]
+        public void ExecuteCommand_TriangleCommand_WithInvalidParameters_ShouldThrowArgumentException()
+        {
+            // Arrange
+            CommandParser commandParser = CommandParser.Instance;
+
+            // Act & Assert
+            Assert.ThrowsException<ArgumentException>(() =>
+            {
+                commandParser.ParseAndExecute("triangle invalidParameter");
+            });
+        }
     }
 
 }
