@@ -71,7 +71,7 @@ namespace Graphical_Language
                     //ExecuteTriangleCommand(words);
                     break;
                 case "fill":
-                    //ExecuteFillCommand(words);
+                    ExecuteFillCommand(words);
                     break;
                 default:
                     throw new ArgumentException("invalidcommand");
@@ -275,6 +275,41 @@ namespace Graphical_Language
         }
 
         #endregion
+
+        #region Fill Command
+
+        /// <summary>
+        /// Executes the 'fill' command, toggling the fill state for subsequent shape operations.
+        /// </summary>
+        /// <param name="words">An array of words containing the command and its parameters.</param>
+        /// <exception cref="ArgumentException">Thrown when the command is invalid or has incorrect parameters.</exception>
+        private void ExecuteFillCommand(string[] words)
+        {
+            if (words.Length < 2)
+            {
+                throw new ArgumentException("Invalid 'fill' command. Usage: fill <on/off>");
+            }
+
+            string fillState = words[1].ToLower();
+
+            if (fillState == "on")
+            {
+                FillEnabled = true;
+                DisplayMessage("Fill turned on");
+            }
+            else if (fillState == "off")
+            {
+                FillEnabled = false;
+                DisplayMessage("Fill turned off");
+            }
+            else
+            {
+                throw new ArgumentException("Invalid 'fill' command. Use 'on' or 'off'.");
+            }
+        }
+
+        #endregion
+
 
 
 
