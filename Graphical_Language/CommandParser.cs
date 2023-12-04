@@ -68,7 +68,7 @@ namespace Graphical_Language
                     ExecuteCircleCommand(words);
                     break;
                 case "triangle":
-                    //ExecuteTriangleCommand(words);
+                    ExecuteTriangleCommand(words);
                     break;
                 case "fill":
                     ExecuteFillCommand(words);
@@ -403,6 +403,58 @@ namespace Graphical_Language
             }
         }
 
+        #endregion
+
+        #region trianglecommand
+
+        /// <summary>
+        /// Executes the 'triangle' command, drawing a triangle at the current pen position.
+        /// </summary>
+        /// <param name="words">An array of words containing the command and its parameters.</param>
+        /// <exception cref="ArgumentException">Thrown when the command is invalid or has incorrect parameters.</exception>
+        /// <remarks>
+        /// The 'triangle' command requires the base and height of the triangle.
+        /// The command format is: triangle <base> <height>
+        /// </remarks>
+        private void ExecuteTriangleCommand(string[] words)
+        {
+            if (words.Length < 3)
+            {
+                throw new ArgumentException("Invalid 'triangle' command. Usage: triangle <base> <height>");
+            }
+
+            if (int.TryParse(words[1], out int baseLength) && int.TryParse(words[2], out int height))
+            {
+                // Calculate the coordinates of the vertices based on the base and height
+                int x1 = CurrentPenX;
+                int y1 = CurrentPenY;
+                int x2 = x1 + baseLength;
+                int y2 = y1;
+                int x3 = x1 + baseLength / 2;
+                int y3 = y1 - height;
+
+                // Draw a triangle at the current pen position
+                using (Graphics g = pictureBox.CreateGraphics())
+                {
+                    if (FillEnabled)
+                    {
+                        // Draw filled triangle at the specified vertices
+                        Point[] triangleVertices = { new Point(x1, y1), new Point(x2, y2), new Point(x3, y3) };
+                        g.FillPolygon(new SolidBrush(PenColor), triangleVertices);
+                    }
+                    else
+                    {
+                        // Draw triangle outline at the specified vertices
+                        Point[] triangleVertices = { new Point(x1, y1), new Point(x2, y2), new Point(x3, y3) };
+                        g.DrawPolygon(new Pen(PenColor), triangleVertices);
+                    }
+                }
+            }
+            else
+            {
+                throw new ArgumentException("Invalid 'triangle' command. Base and height must be integers.");
+            }
+        }
         #endregion
 
 
