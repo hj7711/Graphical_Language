@@ -18,6 +18,8 @@ namespace Graphical_Language
         public Color PenColor { get; set; } = Color.Black;
         public PictureBox pictureBox{ get; set;}
 
+        public bool FillEnabled { get; set; }
+
         //filepath change it according to requirement
         public string filepath = @"C:\Users\hp\Desktop\Graphical Language\Graphical_Language\Graphical_Language\Program.txt";
 
@@ -47,8 +49,8 @@ namespace Graphical_Language
                 case "position":
                     ExecutePositionCommand(words);
                     break;
-                case "pen":
-                   // ExecutePenCommand(words);
+                case "pen":      
+                    //ExecutePenColorCommand(words);
                     break;
                 case "draw":
                     //ExecuteDrawCommand(words);
@@ -60,7 +62,7 @@ namespace Graphical_Language
                     //ExecuteResetCommand();
                     break;
                 case "rectangle":
-                   // ExecuteRectangleCommand(words);
+                    //ExecuteRectangleCommand(words);
                     break;
                 case "circle":
                    // ExecuteCircleCommand(words);
@@ -121,7 +123,13 @@ namespace Graphical_Language
         }
 
 
-        #region position command
+        #region Position Command
+
+        /// <summary>
+        /// Executes the 'position' command, updating the pen position and drawing it on the PictureBox.
+        /// </summary>
+        /// <param name="words">An array of words containing the command and its parameters.</param>
+        /// <exception cref="ArgumentException">Thrown when the command is invalid or has incorrect parameters.</exception>
         private void ExecutePositionCommand(string[] words)
         {
             if (words.Length < 3)
@@ -144,6 +152,9 @@ namespace Graphical_Language
             }
         }
 
+        /// <summary>
+        /// Draws the current pen position on the PictureBox.
+        /// </summary>
         private void DrawPenPosition()
         {
             if (pictureBox != null)
@@ -151,20 +162,19 @@ namespace Graphical_Language
                 using (Graphics g = pictureBox.CreateGraphics())
                 using (Pen pen = new Pen(PenColor)) // You can set the pen color based on your needs
                 {
-                    // Clear the previous drawings in the PictureBox
-                    g.Clear(pictureBox.BackColor);
+                    // Clear the previous drawings in the PictureBox (optional)
+                    // g.Clear(pictureBox.BackColor);
 
                     // Draw a point or small circle to represent the pen position
                     int penSize = 5;
                     g.DrawEllipse(pen, CurrentPenX - penSize / 2, CurrentPenY - penSize / 2, penSize, penSize);
-
                 }
             }
-
-            
         }
 
         #endregion
+
+
 
         private void DisplayMessage(string message)
         {

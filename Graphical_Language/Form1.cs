@@ -20,7 +20,13 @@ namespace Graphical_Language
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if(input_text != "")
+            if(input_text == textBox2.Text && input_text != "")
+            {
+                CommandParser.Instance.RunProgram(input_text);
+                input_text = "";
+            }
+
+            else if (input_text == textBox1.Text && input_text != "")
             {
                 CommandParser.Instance.ParseAndExecute(input_text);
                 input_text = "";
