@@ -59,7 +59,7 @@ namespace Graphical_Language
                     ExecuteClearCommand();
                     break;
                 case "reset":
-                    //ExecuteResetCommand();
+                    ExecuteResetCommand();
                     break;
                 case "rectangle":
                     ExecuteRectangleCommand(words);
@@ -349,6 +349,23 @@ namespace Graphical_Language
         }
 
         #endregion
+
+        #region Reset Command
+
+        /// <summary>
+        /// Executes the 'reset' command, moving the pen to the initial position at the top left of the screen.
+        /// </summary>
+        private void ExecuteResetCommand()
+        {
+            // Set the pen position to the initial position (e.g., top left corner)
+            CurrentPenX = 0;
+            CurrentPenY = 0;
+
+            DisplayMessage("Pen reset to initial position");
+        }
+
+        #endregion
+
 
 
 
