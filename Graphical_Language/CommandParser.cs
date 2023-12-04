@@ -62,7 +62,7 @@ namespace Graphical_Language
                     //ExecuteResetCommand();
                     break;
                 case "rectangle":
-                    //ExecuteRectangleCommand(words);
+                    ExecuteRectangleCommand(words);
                     break;
                 case "circle":
                    // ExecuteCircleCommand(words);
@@ -305,6 +305,46 @@ namespace Graphical_Language
             else
             {
                 throw new ArgumentException("Invalid 'fill' command. Use 'on' or 'off'.");
+            }
+        }
+
+        #endregion
+
+
+        #region Rectangle Command
+
+        /// <summary>
+        /// Executes the 'rectangle' command, drawing a rectangle at the current pen position.
+        /// </summary>
+        /// <param name="words">An array of words containing the command and its parameters.</param>
+        /// <exception cref="ArgumentException">Thrown when the command is invalid or has incorrect parameters.</exception>
+        private void ExecuteRectangleCommand(string[] words)
+        {
+            if (words.Length < 3)
+            {
+                throw new ArgumentException("Invalid 'rectangle' command. Usage: rectangle <width> <height>");
+            }
+
+            if (int.TryParse(words[1], out int width) && int.TryParse(words[2], out int height))
+            {
+                // Draw a rectangle at the current pen position
+                using (Graphics g = pictureBox.CreateGraphics())
+                {
+                    if (FillEnabled)
+                    {
+                        // Draw filled rectangle at the specified position
+                        g.FillRectangle(new SolidBrush(PenColor), CurrentPenX, CurrentPenY, width, height);
+                    }
+                    else
+                    {
+                        // Draw rectangle outline at the specified position
+                        g.DrawRectangle(new Pen(PenColor), CurrentPenX, CurrentPenY, width, height);
+                    }
+                }
+            }
+            else
+            {
+                throw new ArgumentException("Invalid 'rectangle' command. Width and height must be integers.");
             }
         }
 
