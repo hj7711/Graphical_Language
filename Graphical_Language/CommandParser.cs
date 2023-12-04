@@ -65,7 +65,7 @@ namespace Graphical_Language
                     ExecuteRectangleCommand(words);
                     break;
                 case "circle":
-                   // ExecuteCircleCommand(words);
+                    ExecuteCircleCommand(words);
                     break;
                 case "triangle":
                     //ExecuteTriangleCommand(words);
@@ -366,6 +366,44 @@ namespace Graphical_Language
 
         #endregion
 
+        #region Circle Command
+
+        /// <summary>
+        /// Executes the 'circle' command, drawing a circle at the current pen position with the specified radius.
+        /// </summary>
+        /// <param name="words">An array of words containing the command and its parameters.</param>
+        /// <exception cref="ArgumentException">Thrown when the command is invalid or has incorrect parameters.</exception>
+        private void ExecuteCircleCommand(string[] words)
+        {
+            if (words.Length < 2)
+            {
+                throw new ArgumentException("Invalid 'circle' command. Usage: circle <radius>");
+            }
+
+            if (int.TryParse(words[1], out int radius))
+            {
+                // Draw a circle at the current pen position
+                using (Graphics g = pictureBox.CreateGraphics())
+                {
+                    if (FillEnabled)
+                    {
+                        // Draw filled circle at the specified position
+                        g.FillEllipse(new SolidBrush(PenColor), CurrentPenX - radius, CurrentPenY - radius, 2 * radius, 2 * radius);
+                    }
+                    else
+                    {
+                        // Draw circle outline at the specified position
+                        g.DrawEllipse(new Pen(PenColor), CurrentPenX - radius, CurrentPenY - radius, 2 * radius, 2 * radius);
+                    }
+                }
+            }
+            else
+            {
+                throw new ArgumentException("Invalid 'circle' command. Radius must be an integer.");
+            }
+        }
+
+        #endregion
 
 
 
