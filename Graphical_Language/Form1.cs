@@ -23,7 +23,9 @@ namespace Graphical_Language
             if(input_text == textBox2.Text && input_text != "")
             {
                 CommandParser.Instance.RunProgram(input_text);
+                CommandParser.Instance.SaveProgramToFile(CommandParser.Instance.filepath, input_text);
                 input_text = "";
+
             }
 
             else if (input_text == textBox1.Text && input_text != "")
@@ -31,6 +33,10 @@ namespace Graphical_Language
                 CommandParser.Instance.ParseAndExecute(input_text);
                 input_text = "";
             }
+
+            textBox1.Text = "";
+            textBox2.Text = "";
+
         }
 
 
@@ -42,6 +48,15 @@ namespace Graphical_Language
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             input_text = textBox2.Text;
+        }
+
+        private void SYNTEX_Click(object sender, EventArgs e)
+        {
+            if (input_text == textBox1.Text && input_text != "")
+            {
+                CommandParser.Instance.CheckSyntex(input_text);
+            }
+
         }
     }
 }

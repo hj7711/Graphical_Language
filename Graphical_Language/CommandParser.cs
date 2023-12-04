@@ -21,7 +21,7 @@ namespace Graphical_Language
         public bool FillEnabled { get; set; }
 
         //filepath change it according to requirement
-        public string filepath = @"C:\Users\hp\Desktop\Graphical Language\Graphical_Language\Graphical_Language\Program.txt";
+        public string filepath = @"C:\Users\hp\Desktop\Graphical Language\Graphical_Language\Graphical_Language\SaveProgram.txt";
 
         public static CommandParser Instance
         {
@@ -78,6 +78,89 @@ namespace Graphical_Language
                     break;
             }
         }
+
+        public void CheckSyntex(string command)
+        {
+            // Split the command into words
+            string[] words = command.Split(' ');
+
+            // Extract the command keyword (first word)
+            string keyword = words[0].ToLower();
+
+            // Execute the corresponding method based on the command keyword
+            switch (keyword)
+            {
+                case "position":
+                    if (int.TryParse(words[1], out int x) && int.TryParse(words[2], out int y) && words.Length == 3)
+                    {
+                        DisplayMessage("Correct Syntex");
+                    }
+                    else
+                        DisplayMessage("Invalid Syntex");
+                    break;
+                case "pen":
+                    string colorName = words[1].ToLower();
+                    if (IsKnownColor(colorName))
+                        DisplayMessage("Correct Syntex");
+                    else
+                        DisplayMessage("Invalid Syntex");
+                    break;
+                case "draw":
+                    if (int.TryParse(words[1], out int x1) && int.TryParse(words[2], out int y1) && words.Length == 3)
+                    {
+                        DisplayMessage("Correct Syntex");
+                    }
+                    else
+                        DisplayMessage("Invalid Syntex");
+                    break;
+                case "clear":
+                    if (words.Length == 1)
+                        DisplayMessage("Correct Syntex");
+                    else
+                        DisplayMessage("Invalid Syntex");
+                    break;
+                case "reset":
+                    if (words.Length == 1)
+                        DisplayMessage("Correct Syntex");
+                    else
+                        DisplayMessage("Invalid Syntex");
+                    break;
+                case "rectangle":
+                    if (int.TryParse(words[1], out int x2) && int.TryParse(words[2], out int y2) && words.Length == 3)
+                    {
+                        DisplayMessage("Correct Syntex");
+                    }
+                    else
+                        DisplayMessage("Invalid Syntex");
+                    break;
+                case "circle":
+                    if (int.TryParse(words[1], out int c) &&words.Length == 2)
+                    {
+                        DisplayMessage("Correct Syntex");
+                    }
+                    else
+                        DisplayMessage("Invalid Syntex");
+                    break;
+                case "triangle":
+                    if (int.TryParse(words[1], out int x3) && int.TryParse(words[2], out int y3) && words.Length == 3)
+                    {
+                        DisplayMessage("Correct Syntex");
+                    }
+                    else
+                        DisplayMessage("Invalid Syntex");
+                    break;
+                case "fill":
+                    if(words[1]=="on" || words[1] == "off")
+                        DisplayMessage("Correct Syntex");
+                    else
+                        DisplayMessage("Invalid Syntex");
+                    break;
+                default:
+                    DisplayMessage("Invalid Syntex");
+                    break;
+            }
+        }
+
 
         public void RunProgram(string program)
         {
@@ -327,20 +410,24 @@ namespace Graphical_Language
 
             if (int.TryParse(words[1], out int width) && int.TryParse(words[2], out int height))
             {
-                // Draw a rectangle at the current pen position
-                using (Graphics g = pictureBox.CreateGraphics())
+                if(pictureBox != null)
                 {
-                    if (FillEnabled)
+                    // Draw a rectangle at the current pen position
+                    using (Graphics g = pictureBox.CreateGraphics())
                     {
-                        // Draw filled rectangle at the specified position
-                        g.FillRectangle(new SolidBrush(PenColor), CurrentPenX, CurrentPenY, width, height);
-                    }
-                    else
-                    {
-                        // Draw rectangle outline at the specified position
-                        g.DrawRectangle(new Pen(PenColor), CurrentPenX, CurrentPenY, width, height);
+                        if (FillEnabled)
+                        {
+                            // Draw filled rectangle at the specified position
+                            g.FillRectangle(new SolidBrush(PenColor), CurrentPenX, CurrentPenY, width, height);
+                        }
+                        else
+                        {
+                            // Draw rectangle outline at the specified position
+                            g.DrawRectangle(new Pen(PenColor), CurrentPenX, CurrentPenY, width, height);
+                        }
                     }
                 }
+                
             }
             else
             {
@@ -382,20 +469,24 @@ namespace Graphical_Language
 
             if (int.TryParse(words[1], out int radius))
             {
-                // Draw a circle at the current pen position
-                using (Graphics g = pictureBox.CreateGraphics())
+                if(pictureBox != null)
                 {
-                    if (FillEnabled)
+                    // Draw a circle at the current pen position
+                    using (Graphics g = pictureBox.CreateGraphics())
                     {
-                        // Draw filled circle at the specified position
-                        g.FillEllipse(new SolidBrush(PenColor), CurrentPenX - radius, CurrentPenY - radius, 2 * radius, 2 * radius);
-                    }
-                    else
-                    {
-                        // Draw circle outline at the specified position
-                        g.DrawEllipse(new Pen(PenColor), CurrentPenX - radius, CurrentPenY - radius, 2 * radius, 2 * radius);
+                        if (FillEnabled)
+                        {
+                            // Draw filled circle at the specified position
+                            g.FillEllipse(new SolidBrush(PenColor), CurrentPenX - radius, CurrentPenY - radius, 2 * radius, 2 * radius);
+                        }
+                        else
+                        {
+                            // Draw circle outline at the specified position
+                            g.DrawEllipse(new Pen(PenColor), CurrentPenX - radius, CurrentPenY - radius, 2 * radius, 2 * radius);
+                        }
                     }
                 }
+                
             }
             else
             {
@@ -433,22 +524,27 @@ namespace Graphical_Language
                 int x3 = x1 + baseLength / 2;
                 int y3 = y1 - height;
 
-                // Draw a triangle at the current pen position
-                using (Graphics g = pictureBox.CreateGraphics())
+                if(pictureBox != null)
                 {
-                    if (FillEnabled)
+                    // Draw a triangle at the current pen position
+                    using (Graphics g = pictureBox.CreateGraphics())
                     {
-                        // Draw filled triangle at the specified vertices
-                        Point[] triangleVertices = { new Point(x1, y1), new Point(x2, y2), new Point(x3, y3) };
-                        g.FillPolygon(new SolidBrush(PenColor), triangleVertices);
+                        if (FillEnabled)
+                        {
+                            // Draw filled triangle at the specified vertices
+                            Point[] triangleVertices = { new Point(x1, y1), new Point(x2, y2), new Point(x3, y3) };
+                            g.FillPolygon(new SolidBrush(PenColor), triangleVertices);
+                        }
+                        else
+                        {
+                            // Draw triangle outline at the specified vertices
+                            Point[] triangleVertices = { new Point(x1, y1), new Point(x2, y2), new Point(x3, y3) };
+                            g.DrawPolygon(new Pen(PenColor), triangleVertices);
+                        }
                     }
-                    else
-                    {
-                        // Draw triangle outline at the specified vertices
-                        Point[] triangleVertices = { new Point(x1, y1), new Point(x2, y2), new Point(x3, y3) };
-                        g.DrawPolygon(new Pen(PenColor), triangleVertices);
-                    }
+
                 }
+                
             }
             else
             {
