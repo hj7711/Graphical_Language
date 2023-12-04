@@ -102,6 +102,19 @@ namespace Graphical_Language
             }
         }
 
+        public string LoadProgramFromFile(string filePath)
+        {
+            try
+            {
+                return System.IO.File.ReadAllText(filePath);
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage($"Error loading program from file: {ex.Message}");
+                return string.Empty;
+            }
+        }
+
         private void DisplayMessage(string message)
         {
             // Show the message in a MessageBox
