@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -10,6 +12,10 @@ namespace Graphical_Language
     class CommandParser
     {
         private static CommandParser instance;
+
+        //filepath change it according to requirement
+        public string filepath = @"C:\Users\hp\Desktop\Graphical Language\Graphical_Language\Graphical_Language\Program.txt";
+
         public static CommandParser Instance
         {
             get
@@ -80,6 +86,19 @@ namespace Graphical_Language
             catch (Exception ex)
             {
                 DisplayMessage($"Error executing program: {ex.Message}");
+            }
+        }
+
+
+        public void SaveProgramToFile(string filePath, string program)
+        {
+            try
+            {
+                System.IO.File.WriteAllText(filePath, program);
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage($"Error saving program to file: {ex.Message}");
             }
         }
 
