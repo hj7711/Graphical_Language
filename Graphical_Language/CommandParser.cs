@@ -56,7 +56,7 @@ namespace Graphical_Language
                     ExecuteDrawCommand(words);
                     break;
                 case "clear":
-                    //ExecuteClearCommand();
+                    ExecuteClearCommand();
                     break;
                 case "reset":
                     //ExecuteResetCommand();
@@ -252,6 +252,27 @@ namespace Graphical_Language
         }
 
         #endregion
+
+        #region Clear Command
+
+        /// <summary>
+        /// Clears the drawing area in the graphical environment.
+        /// </summary>
+        /// <remarks>
+        /// This command removes all drawn elements from the drawing area, providing a clean slate for further drawing.
+        /// </remarks>
+        private void ExecuteClearCommand()
+        {
+            // Use the Refresh method to clear the drawing area
+            pictureBox.Refresh();
+
+            // Display a message indicating that the drawing area has been cleared
+            DisplayMessage("Drawing area cleared");
+        }
+
+        #endregion
+
+
 
 
 
