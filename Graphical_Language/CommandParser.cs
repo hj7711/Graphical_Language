@@ -66,7 +66,22 @@ namespace Graphical_Language
             }
         }
 
+        public void RunProgram(string program)
+        {
+            try
+            {
+                string[] lines = program.Split('\n');
 
+                foreach (string line in lines)
+                {
+                    ParseAndExecute(line.Trim());
+                }
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage($"Error executing program: {ex.Message}");
+            }
+        }
 
         private void DisplayMessage(string message)
         {
