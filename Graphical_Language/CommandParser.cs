@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -9,9 +10,13 @@ using System.Windows.Forms;
 
 namespace Graphical_Language
 {
-    class CommandParser
+    public class CommandParser
     {
         private static CommandParser instance;
+        public int CurrentPenX { get; private set; } = 0;
+        public int CurrentPenY { get; private set; } = 0;
+        public Color PenColor { get; set; } = Color.Black;
+        public PictureBox pictureBox{ get; set;}
 
         //filepath change it according to requirement
         public string filepath = @"C:\Users\hp\Desktop\Graphical Language\Graphical_Language\Graphical_Language\Program.txt";
@@ -40,7 +45,7 @@ namespace Graphical_Language
             switch (keyword)
             {
                 case "position":
-                    //ExecutePositionCommand(words);
+                    ExecutePositionCommand(words);
                     break;
                 case "pen":
                    // ExecutePenCommand(words);
@@ -67,7 +72,7 @@ namespace Graphical_Language
                     //ExecuteFillCommand(words);
                     break;
                 default:
-                    Console.WriteLine("Invalid command");
+                    throw new ArgumentException("invalidcommand");
                     break;
             }
         }
@@ -114,6 +119,52 @@ namespace Graphical_Language
                 return string.Empty;
             }
         }
+
+
+        #region position command
+        private void ExecutePositionCommand(string[] words)
+        {
+            if (words.Length < 3)
+            {
+                throw new ArgumentException("Invalid 'position' command. Usage: position <x> <y>");
+            }
+
+            if (int.TryParse(words[1], out int x) && int.TryParse(words[2], out int y))
+            {
+                // Update the pen position
+                CurrentPenX = x;
+                CurrentPenY = y;
+
+                // Draw the updated position in the PictureBox
+                DrawPenPosition();
+            }
+            else
+            {
+                throw new ArgumentException("Invalid 'position' command. Coordinates must be integers.");
+            }
+        }
+
+        private void DrawPenPosition()
+        {
+            if (pictureBox != null)
+            {
+                using (Graphics g = pictureBox.CreateGraphics())
+                using (Pen pen = new Pen(PenColor)) // You can set the pen color based on your needs
+                {
+                    // Clear the previous drawings in the PictureBox
+                    g.Clear(pictureBox.BackColor);
+
+                    // Draw a point or small circle to represent the pen position
+                    int penSize = 5;
+                    g.DrawEllipse(pen, CurrentPenX - penSize / 2, CurrentPenY - penSize / 2, penSize, penSize);
+
+                }
+            }
+
+            
+        }
+
+        #endregion
 
         private void DisplayMessage(string message)
         {

@@ -5,6 +5,11 @@ VisualStudioVersion = 16.0.32413.511
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Graphical_Language", "Graphical_Language\Graphical_Language.csproj", "{83047A11-A691-4A24-A0A5-F367FF36B57E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject", "UnitTestProject\UnitTestProject.csproj", "{B0629030-F425-4D6A-939A-94667790F73F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{83047A11-A691-4A24-A0A5-F367FF36B57E} = {83047A11-A691-4A24-A0A5-F367FF36B57E}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +20,10 @@ Global
 		{83047A11-A691-4A24-A0A5-F367FF36B57E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83047A11-A691-4A24-A0A5-F367FF36B57E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83047A11-A691-4A24-A0A5-F367FF36B57E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0629030-F425-4D6A-939A-94667790F73F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0629030-F425-4D6A-939A-94667790F73F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0629030-F425-4D6A-939A-94667790F73F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0629030-F425-4D6A-939A-94667790F73F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace Graphical_Language
 {
     partial class Graphical_Language
@@ -43,6 +45,7 @@ namespace Graphical_Language
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(345, 20);
             this.textBox1.TabIndex = 0;
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // textBox2
             // 
@@ -51,6 +54,7 @@ namespace Graphical_Language
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(345, 305);
             this.textBox2.TabIndex = 1;
+            this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             // 
             // RUN
             // 
@@ -72,13 +76,15 @@ namespace Graphical_Language
             this.SYNTEX.UseVisualStyleBackColor = true;
             // 
             // pictureBox1
-            // 
+            //
+            CommandParser.Instance.pictureBox = this.pictureBox1;
             this.pictureBox1.BackColor = System.Drawing.SystemColors.AppWorkspace;
             this.pictureBox1.Location = new System.Drawing.Point(398, 37);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(366, 352);
             this.pictureBox1.TabIndex = 4;
             this.pictureBox1.TabStop = false;
+            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
             // Graphical_Language
             // 
@@ -96,6 +102,11 @@ namespace Graphical_Language
             this.ResumeLayout(false);
             this.PerformLayout();
 
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
 
