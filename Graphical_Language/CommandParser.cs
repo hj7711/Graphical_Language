@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -24,6 +25,10 @@ namespace Graphical_Language
         public string filepath = @"C:\Users\hp\Desktop\Graphical Language\Graphical_Language\Graphical_Language\SaveProgram.txt";
 
         private Dictionary<string, Variable> variables = new Dictionary<string, Variable>();
+
+        private Stack<string> IfStack = new Stack<string>();
+
+        bool IfConditionMet;
         public static CommandParser Instance
         {
             get
@@ -38,7 +43,7 @@ namespace Graphical_Language
 
         public void ParseAndExecute(string command)
         {
-            if (command.Contains("="))
+            if (!command.Contains("==") && !command.Contains("!=") && command.Contains("="))
             {
                 HandleVariableAssignment(command);
             }
@@ -79,6 +84,9 @@ namespace Graphical_Language
                         break;
                     case "fill":
                         ExecuteFillCommand(words);
+                        break;
+                    case "if":
+                        ExecuteIfCommand(words);
                         break;
                     default:
                         throw new ArgumentException("invalidcommand");
@@ -177,9 +185,33 @@ namespace Graphical_Language
             {
                 string[] lines = program.Split('\n');
 
+
                 foreach (string line in lines)
                 {
-                    ParseAndExecute(line.Trim());
+                    string trimmedLine = line.Trim();
+
+                    if (trimmedLine.StartsWith("if"))
+                    {
+                        ParseAndExecute(trimmedLine);
+                        IfStack.Push(trimmedLine);
+                    }
+                    else if(trimmedLine.StartsWith("endif"))
+                    {
+                        IfStack.Pop();
+                    }
+                    else if(IfConditionMet)
+                    {
+                        ParseAndExecute(trimmedLine);
+                    }
+                    else if(IfStack.Count == 0)
+                    {
+                        ParseAndExecute(trimmedLine);
+                    }
+                }
+
+                if(IfStack.Count > 0)
+                {
+                    DisplayMessage($"Error executing program: no endif found");
                 }
             }
             catch (Exception ex)
@@ -187,6 +219,7 @@ namespace Graphical_Language
                 DisplayMessage($"Error executing program: {ex.Message}");
             }
         }
+
 
 
         public void SaveProgramToFile(string filePath, string program)
@@ -712,6 +745,80 @@ namespace Graphical_Language
                 throw new ArgumentException("Invalid variable assignment syntax.");
             }
         }
+
+        #endregion
+
+        #region if statement
+        /// <summary>
+        /// Executes an 'if' command with the specified condition.
+        /// </summary>
+        /// <param name="words">An array of words containing the 'if' command and its condition.</param>
+        /// <exception cref="ArgumentException">Thrown when the condition syntax is invalid or when an operand is not a valid variable or constant.</exception>
+
+        private void ExecuteIfCommand(string[] words)
+        {
+            string condition = string.Join(" ", words.Skip(1));
+
+            string[] conditionParts = Regex.Split(condition, @"\s*(==|!=|<=|>=|<|>)\s*");
+
+            if (conditionParts.Length != 3)
+            {
+                throw new ArgumentException("Invalid condition syntax.");
+            }
+
+
+            string leftOperand = conditionParts[0].Trim();
+            string op = conditionParts[1].Trim();
+            string rightOperand = conditionParts[2].Trim();
+
+            int leftValue;
+            int rightValue;
+
+            // Check if the left operand is a variable
+            if (int.TryParse(leftOperand, out leftValue))
+            {
+                // Left operand is a constant, try to parse the right operand as a variable
+                if (!int.TryParse(rightOperand, out rightValue))
+                {
+                    rightValue = GetVariableValue(rightOperand);
+                }
+            }
+            else
+            {
+                // Left operand is a variable, parse its value
+                leftValue = GetVariableValue(leftOperand);
+
+                // Try to parse the right operand as a variable or constant
+                if (!int.TryParse(rightOperand, out rightValue))
+                {
+                    rightValue = GetVariableValue(rightOperand);
+                }
+            }
+
+            IfConditionMet = EvaluateCondition(leftValue, op, rightValue);
+        }
+
+        private bool EvaluateCondition(int value1, string op, int value2)
+        {
+            switch (op)
+            {
+                case "==":
+                    return value1 == value2;
+                case "!=":
+                    return value1 != value2;
+                case "<":
+                    return value1 < value2;
+                case ">":
+                    return value1 > value2;
+                case "<=":
+                    return value1 <= value2;
+                case ">=":
+                    return value1 >= value2;
+                default:
+                    throw new ArgumentException($"Invalid operator: {op}");
+            }
+        }
+
 
         #endregion
 

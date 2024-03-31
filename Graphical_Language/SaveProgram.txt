@@ -1,3 +1,6 @@
-r = 20
-moveTo r, r
-circle r
+fill on
+x = 100
+if x == 100
+moveTo x,x
+endif
+circle 100
