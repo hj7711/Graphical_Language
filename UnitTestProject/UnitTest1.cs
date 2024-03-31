@@ -230,6 +230,25 @@ namespace UnitTestProject
         }
 
 
+        /// <summary>
+        /// Tests if the ParseAndExecute method correctly sets IfConditionMet to true when the condition is met.
+        /// </summary>
+        [TestMethod]
+        public void ParseAndExecute_IfStatementWithValidCondition_ShouldSetIfConditionMetToTrue()
+        {
+            // Arrange
+            CommandParser commandParser = CommandParser.Instance;
+            commandParser.AssignVariable("x", 10); // Assign a value to variable x
+            string ifStatement = "if x > 5";
+
+            // Act
+            commandParser.ParseAndExecute(ifStatement);
+
+            // Assert
+            Assert.IsTrue(commandParser.IfConditionMet, "If condition should be met when x > 5.");
+        }
+
+
 
 
         /// <summary>

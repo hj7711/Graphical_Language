@@ -28,7 +28,7 @@ namespace Graphical_Language
 
         private Stack<string> IfStack = new Stack<string>();
 
-        bool IfConditionMet;
+        public bool IfConditionMet;
         public static CommandParser Instance
         {
             get
