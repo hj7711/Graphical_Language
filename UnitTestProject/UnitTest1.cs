@@ -19,7 +19,7 @@ namespace UnitTestProject
             CommandParser commandParser = CommandParser.Instance;
 
             // Act
-            commandParser.ParseAndExecute("position 10 20");
+            commandParser.ParseAndExecute("moveTo 10, 20");
 
             // Assert - Check the state of CommandParser or other relevant objects
             Assert.AreEqual(10, commandParser.CurrentPenX);
@@ -102,7 +102,8 @@ namespace UnitTestProject
             CommandParser commandParser = CommandParser.Instance;
 
             // Act
-            commandParser.ParseAndExecute("draw 20 30");
+            commandParser.ParseAndExecute("drawTo 20, 30");
+
 
             // Assert
             Assert.AreEqual(20, commandParser.CurrentPenX);
@@ -206,6 +207,27 @@ namespace UnitTestProject
         }
 
 
+        /// <summary>
+        /// Tests whether variables are assigned and retrieved correctly.
+        /// </summary>
+        [TestMethod]
+        public void TestVariableAssignmentAndRetrieval()
+        {
+            // Arrange
+            CommandParser commandParser = CommandParser.Instance;
+
+            // Act
+            commandParser.ParseAndExecute("x = 10");
+            commandParser.ParseAndExecute("y = 20");
+
+            // Assert
+            // Check if variables are assigned correctly
+            Assert.AreEqual(10, commandParser.GetVariableValue("x"), "Variable 'x' should be assigned the value 10.");
+            Assert.AreEqual(20, commandParser.GetVariableValue("y"), "Variable 'y' should be assigned the value 20.");
+
+            // Attempt to retrieve an undefined variable, should throw ArgumentException
+            Assert.ThrowsException<ArgumentException>(() => commandParser.GetVariableValue("z"));
+        }
 
 
 
@@ -225,10 +247,6 @@ namespace UnitTestProject
                 commandParser.ParseAndExecute("rectangle invalidParameter");
             });
         }
-
-
-
-
 
 
         /// <summary>
@@ -270,6 +288,29 @@ namespace UnitTestProject
             });
         }
 
+
+        /// <summary>
+        /// Tests whether the 'circle' command is executed correctly with a radius of 30.
+        /// </summary>
+        [TestMethod]
+        public void ExecuteCommand_CircleCommand_WithRadiusThirty_ShouldExecuteCorrectly()
+        {
+            // Arrange
+            CommandParser commandParser = CommandParser.Instance;
+            PictureBox pictureBox = new PictureBox();
+            commandParser.pictureBox = pictureBox;
+
+            // Act
+            commandParser.ParseAndExecute("circle 30");
+
+            // Assert
+            // Check if the current pen position is updated after executing the command
+            Assert.AreEqual(0, commandParser.CurrentPenX, "CurrentPenX should be updated to 0.");
+            Assert.AreEqual(0, commandParser.CurrentPenY, "CurrentPenY should be updated to 0.");
+
+            // Check if the circle command was executed correctly
+            Assert.AreEqual(100, pictureBox.Width, "The circle width should be set to 30.");
+        }
 
 
 

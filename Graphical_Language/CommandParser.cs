@@ -23,6 +23,7 @@ namespace Graphical_Language
         //filepath change it according to requirement
         public string filepath = @"C:\Users\hp\Desktop\Graphical Language\Graphical_Language\Graphical_Language\SaveProgram.txt";
 
+        private Dictionary<string, Variable> variables = new Dictionary<string, Variable>();
         public static CommandParser Instance
         {
             get
@@ -37,47 +38,55 @@ namespace Graphical_Language
 
         public void ParseAndExecute(string command)
         {
-            // Split the command into words
-            string[] words = command.Split(' ');
-
-            // Extract the command keyword (first word)
-            string keyword = words[0].ToLower();
-
-            // Execute the corresponding method based on the command keyword
-            switch (keyword)
+            if (command.Contains("="))
             {
-                case "position":
-                    ExecutePositionCommand(words);
-                    break;
-                case "pen":      
-                    ExecutePenColorCommand(words);
-                    break;
-                case "draw":
-                    ExecuteDrawCommand(words);
-                    break;
-                case "clear":
-                    ExecuteClearCommand();
-                    break;
-                case "reset":
-                    ExecuteResetCommand();
-                    break;
-                case "rectangle":
-                    ExecuteRectangleCommand(words);
-                    break;
-                case "circle":
-                    ExecuteCircleCommand(words);
-                    break;
-                case "triangle":
-                    ExecuteTriangleCommand(words);
-                    break;
-                case "fill":
-                    ExecuteFillCommand(words);
-                    break;
-                default:
-                    throw new ArgumentException("invalidcommand");
-                    break;
+                HandleVariableAssignment(command);
+            }
+            else
+            {
+                // Split the command into words
+                string[] words = command.Split(' ');
+
+                // Extract the command keyword (first word)
+                string keyword = words[0].ToLower();
+
+                // Execute the corresponding method based on the command keyword
+                switch (keyword)
+                {
+                    case "moveto":
+                        ExecutePositionCommand(words);
+                        break;
+                    case "pen":
+                        ExecutePenColorCommand(words);
+                        break;
+                    case "drawto":
+                        ExecuteDrawCommand(words);
+                        break;
+                    case "clear":
+                        ExecuteClearCommand();
+                        break;
+                    case "reset":
+                        ExecuteResetCommand();
+                        break;
+                    case "rectangle":
+                        ExecuteRectangleCommand(words);
+                        break;
+                    case "circle":
+                        ExecuteCircleCommand(words);
+                        break;
+                    case "triangle":
+                        ExecuteTriangleCommand(words);
+                        break;
+                    case "fill":
+                        ExecuteFillCommand(words);
+                        break;
+                    default:
+                        throw new ArgumentException("invalidcommand");
+                        break;
+                }
             }
         }
+
 
         public void CheckSyntex(string command)
         {
@@ -205,6 +214,31 @@ namespace Graphical_Language
             }
         }
 
+        #region Variables
+
+
+        public void AssignVariable(string name, int value)
+        {
+            if (variables.ContainsKey(name))
+            {
+                variables[name].Value = value;
+            }
+            else
+            {
+                variables.Add(name, new Variable { Name = name, Value = value });
+            }
+        }
+
+        public int GetVariableValue(string name)
+        {
+            if (variables.ContainsKey(name))
+            {
+                return variables[name].Value;
+            }
+            throw new ArgumentException($"Variable '{name}' not found.");
+        }
+        #endregion
+
 
         #region Position Command
 
@@ -215,25 +249,47 @@ namespace Graphical_Language
         /// <exception cref="ArgumentException">Thrown when the command is invalid or has incorrect parameters.</exception>
         private void ExecutePositionCommand(string[] words)
         {
-            if (words.Length < 3)
+            if (words.Length < 2)
             {
-                throw new ArgumentException("Invalid 'position' command. Usage: position <x> <y>");
+                throw new ArgumentException("Invalid 'moveTo' command. Usage: moveTo <x>,<y>");
             }
 
-            if (int.TryParse(words[1], out int x) && int.TryParse(words[2], out int y))
-            {
-                // Update the pen position
-                CurrentPenX = x;
-                CurrentPenY = y;
+            // Extract the coordinates part of the command (after the first word 'position')
+            string coordinatesPart = string.Join(" ", words.Skip(1));
 
-                // Draw the updated position in the PictureBox
-                DrawPenPosition();
-            }
-            else
+            // Split the coordinates by comma and trim each part to remove spaces
+            string[] coordinates = coordinatesPart.Split(',').Select(c => c.Trim()).ToArray();
+
+            // Ensure there are two parts (x and y) after splitting
+            if (coordinates.Length != 2)
             {
-                throw new ArgumentException("Invalid 'position' command. Coordinates must be integers.");
+                throw new ArgumentException("Invalid 'moveTo' command. Usage: moveTo <x>,<y>");
             }
+
+            // Parse x coordinate
+            int x;
+            if (!int.TryParse(coordinates[0], out x))
+            {
+                // Attempt to retrieve value of the variable if it's not an integer
+                x = GetVariableValue(coordinates[0]);
+            }
+
+            // Parse y coordinate
+            int y;
+            if (!int.TryParse(coordinates[1], out y))
+            {
+                // Attempt to retrieve value of the variable if it's not an integer
+                y = GetVariableValue(coordinates[1]);
+            }
+
+            // Update the pen position
+            CurrentPenX = x;
+            CurrentPenY = y;
+
+            // Draw the updated position in the PictureBox
+            DrawPenPosition();
         }
+
 
         /// <summary>
         /// Draws the current pen position on the PictureBox.
@@ -306,33 +362,53 @@ namespace Graphical_Language
         /// <exception cref="ArgumentException">Thrown when the command is invalid or has incorrect parameters.</exception>
         private void ExecuteDrawCommand(string[] words)
         {
-            if (words.Length < 3)
+            if (words.Length < 2)
             {
-                throw new ArgumentException("Invalid 'draw' command. Usage: draw <x> <y>");
+                throw new ArgumentException("Invalid 'drawTo' command. Usage: drawTo <x>,<y>");
             }
 
-            if (int.TryParse(words[1], out int x) && int.TryParse(words[2], out int y))
+            // Extract the coordinates part of the command (after the first word 'draw')
+            string coordinatesPart = string.Join(" ", words.Skip(1));
+
+            // Split the coordinates by comma and trim each part to remove spaces
+            string[] coordinates = coordinatesPart.Split(',').Select(c => c.Trim()).ToArray();
+
+            // Ensure there are two parts (x and y) after splitting
+            if (coordinates.Length != 2)
             {
-                if(pictureBox != null)
+                throw new ArgumentException("Invalid 'drawTo' command. Usage: drawTo <x>,<y>");
+            }
+
+            // Parse x coordinate
+            int x;
+            if (!int.TryParse(coordinates[0], out x))
+            {
+                // Attempt to retrieve value of the variable if it's not an integer
+                x = GetVariableValue(coordinates[0]);
+            }
+
+            // Parse y coordinate
+            int y;
+            if (!int.TryParse(coordinates[1], out y))
+            {
+                // Attempt to retrieve value of the variable if it's not an integer
+                y = GetVariableValue(coordinates[1]);
+            }
+
+            if (pictureBox != null)
+            {
+                // Draw a line from the current pen position to the specified coordinates
+                using (Graphics g = pictureBox.CreateGraphics())
                 {
-                    // Draw a line from the current pen position to the specified coordinates
-                    using (Graphics g = pictureBox.CreateGraphics())
-                    {
-                        g.DrawLine(new Pen(PenColor), CurrentPenX, CurrentPenY, x, y);
-                    }
-
-                    
+                    g.DrawLine(new Pen(PenColor), CurrentPenX, CurrentPenY, x, y);
                 }
-                // Update pen position
-                CurrentPenX = x;
-                CurrentPenY = y;
+            }
 
-            }
-            else
-            {
-                throw new ArgumentException("Invalid 'draw' command. Coordinates must be integers.");
-            }
+            // Update pen position
+            CurrentPenX = x;
+            CurrentPenY = y;
         }
+
 
         #endregion
 
@@ -401,39 +477,63 @@ namespace Graphical_Language
         /// </summary>
         /// <param name="words">An array of words containing the command and its parameters.</param>
         /// <exception cref="ArgumentException">Thrown when the command is invalid or has incorrect parameters.</exception>
+
         private void ExecuteRectangleCommand(string[] words)
         {
-            if (words.Length < 3)
+            if (words.Length < 2)
             {
-                throw new ArgumentException("Invalid 'rectangle' command. Usage: rectangle <width> <height>");
+                throw new ArgumentException("Invalid 'rectangle' command. Usage: rectangle <width>,<height>");
             }
 
-            if (int.TryParse(words[1], out int width) && int.TryParse(words[2], out int height))
+            // Extract the dimensions part of the command (after the first word 'rectangle')
+            string dimensionsPart = string.Join(" ", words.Skip(1));
+
+            // Split the dimensions by comma and trim each part to remove spaces
+            string[] dimensions = dimensionsPart.Split(',').Select(d => d.Trim()).ToArray();
+
+            // Ensure there are two parts (width and height) after splitting
+            if (dimensions.Length != 2)
             {
-                if(pictureBox != null)
+                throw new ArgumentException("Invalid 'rectangle' command. Usage: rectangle <width>,<height>");
+            }
+
+            // Parse width
+            int width;
+            if (!int.TryParse(dimensions[0], out width))
+            {
+                // Attempt to retrieve value of the variable if it's not an integer
+                width = GetVariableValue(dimensions[0]);
+            }
+
+            // Parse height
+            int height;
+            if (!int.TryParse(dimensions[1], out height))
+            {
+                // Attempt to retrieve value of the variable if it's not an integer
+                height = GetVariableValue(dimensions[1]);
+            }
+
+            if (pictureBox != null)
+            {
+                // Draw a rectangle at the current pen position
+                using (Graphics g = pictureBox.CreateGraphics())
                 {
-                    // Draw a rectangle at the current pen position
-                    using (Graphics g = pictureBox.CreateGraphics())
+                    if (FillEnabled)
                     {
-                        if (FillEnabled)
-                        {
-                            // Draw filled rectangle at the specified position
-                            g.FillRectangle(new SolidBrush(PenColor), CurrentPenX, CurrentPenY, width, height);
-                        }
-                        else
-                        {
-                            // Draw rectangle outline at the specified position
-                            g.DrawRectangle(new Pen(PenColor), CurrentPenX, CurrentPenY, width, height);
-                        }
+                        // Draw filled rectangle at the specified position
+                        g.FillRectangle(new SolidBrush(PenColor), CurrentPenX, CurrentPenY, width, height);
+                    }
+                    else
+                    {
+                        // Draw rectangle outline at the specified position
+                        g.DrawRectangle(new Pen(PenColor), CurrentPenX, CurrentPenY, width, height);
                     }
                 }
-                
-            }
-            else
-            {
-                throw new ArgumentException("Invalid 'rectangle' command. Width and height must be integers.");
             }
         }
+
+
+
 
         #endregion
 
@@ -467,26 +567,30 @@ namespace Graphical_Language
                 throw new ArgumentException("Invalid 'circle' command. Usage: circle <radius>");
             }
 
-            if (int.TryParse(words[1], out int radius))
+            // Parse radius
+            int radius;
+            if (!int.TryParse(words[1], out radius))
             {
-                if(pictureBox != null)
+                // Attempt to retrieve value of the variable if it's not an integer
+                radius = GetVariableValue(words[1]);
+            }
+
+            if (pictureBox != null)
+            {
+                // Draw a circle at the current pen position
+                using (Graphics g = pictureBox.CreateGraphics())
                 {
-                    // Draw a circle at the current pen position
-                    using (Graphics g = pictureBox.CreateGraphics())
+                    if (FillEnabled)
                     {
-                        if (FillEnabled)
-                        {
-                            // Draw filled circle at the specified position
-                            g.FillEllipse(new SolidBrush(PenColor), CurrentPenX - radius, CurrentPenY - radius, 2 * radius, 2 * radius);
-                        }
-                        else
-                        {
-                            // Draw circle outline at the specified position
-                            g.DrawEllipse(new Pen(PenColor), CurrentPenX - radius, CurrentPenY - radius, 2 * radius, 2 * radius);
-                        }
+                        // Draw filled circle at the specified position
+                        g.FillEllipse(new SolidBrush(PenColor), CurrentPenX - radius, CurrentPenY - radius, 2 * radius, 2 * radius);
+                    }
+                    else
+                    {
+                        // Draw circle outline at the specified position
+                        g.DrawEllipse(new Pen(PenColor), CurrentPenX - radius, CurrentPenY - radius, 2 * radius, 2 * radius);
                     }
                 }
-                
             }
             else
             {
@@ -509,51 +613,107 @@ namespace Graphical_Language
         /// </remarks>
         private void ExecuteTriangleCommand(string[] words)
         {
-            if (words.Length < 3)
+            if (words.Length < 2)
             {
-                throw new ArgumentException("Invalid 'triangle' command. Usage: triangle <base> <height>");
+                throw new ArgumentException("Invalid 'triangle' command. Usage: triangle <base>,<height>");
             }
 
-            if (int.TryParse(words[1], out int baseLength) && int.TryParse(words[2], out int height))
+            // Extract the dimensions part of the command (after the first word 'triangle')
+            string dimensionsPart = string.Join(" ", words.Skip(1));
+
+            // Split the dimensions by comma and trim each part to remove spaces
+            string[] dimensions = dimensionsPart.Split(',').Select(d => d.Trim()).ToArray();
+
+            // Ensure there are two parts (base and height) after splitting
+            if (dimensions.Length != 2)
             {
-                // Calculate the coordinates of the vertices based on the base and height
-                int x1 = CurrentPenX;
-                int y1 = CurrentPenY;
-                int x2 = x1 + baseLength;
-                int y2 = y1;
-                int x3 = x1 + baseLength / 2;
-                int y3 = y1 - height;
+                throw new ArgumentException("Invalid 'triangle' command. Usage: triangle <base>,<height>");
+            }
 
-                if(pictureBox != null)
+            // Parse base length
+            int baseLength;
+            if (!int.TryParse(dimensions[0], out baseLength))
+            {
+                // Attempt to retrieve value of the variable if it's not an integer
+                baseLength = GetVariableValue(dimensions[0]);
+            }
+
+            // Parse height
+            int height;
+            if (!int.TryParse(dimensions[1], out height))
+            {
+                // Attempt to retrieve value of the variable if it's not an integer
+                height = GetVariableValue(dimensions[1]);
+            }
+
+            // Calculate the coordinates of the vertices based on the base and height
+            int x1 = CurrentPenX;
+            int y1 = CurrentPenY;
+            int x2 = x1 + baseLength;
+            int y2 = y1;
+            int x3 = x1 + baseLength / 2;
+            int y3 = y1 - height;
+
+            if (pictureBox != null)
+            {
+                // Draw a triangle at the current pen position
+                using (Graphics g = pictureBox.CreateGraphics())
                 {
-                    // Draw a triangle at the current pen position
-                    using (Graphics g = pictureBox.CreateGraphics())
+                    if (FillEnabled)
                     {
-                        if (FillEnabled)
-                        {
-                            // Draw filled triangle at the specified vertices
-                            Point[] triangleVertices = { new Point(x1, y1), new Point(x2, y2), new Point(x3, y3) };
-                            g.FillPolygon(new SolidBrush(PenColor), triangleVertices);
-                        }
-                        else
-                        {
-                            // Draw triangle outline at the specified vertices
-                            Point[] triangleVertices = { new Point(x1, y1), new Point(x2, y2), new Point(x3, y3) };
-                            g.DrawPolygon(new Pen(PenColor), triangleVertices);
-                        }
+                        // Draw filled triangle at the specified vertices
+                        Point[] triangleVertices = { new Point(x1, y1), new Point(x2, y2), new Point(x3, y3) };
+                        g.FillPolygon(new SolidBrush(PenColor), triangleVertices);
                     }
-
+                    else
+                    {
+                        // Draw triangle outline at the specified vertices
+                        Point[] triangleVertices = { new Point(x1, y1), new Point(x2, y2), new Point(x3, y3) };
+                        g.DrawPolygon(new Pen(PenColor), triangleVertices);
+                    }
                 }
-                
+
             }
             else
             {
                 throw new ArgumentException("Invalid 'triangle' command. Base and height must be integers.");
             }
         }
+
         #endregion
 
+        #region Variable Assignment Command
 
+        /// <summary>
+        /// Handles the assignment of variables in the graphical language.
+        /// </summary>
+        /// <param name="command">The command string containing the variable assignment.</param>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the variable assignment syntax is invalid or the value provided for the variable is not a valid integer.
+        /// </exception>
+        private void HandleVariableAssignment(string command)
+        {
+            string[] parts = command.Split('=');
+            if (parts.Length == 2)
+            {
+                string variableName = parts[0].Trim();
+                int value;
+                if (int.TryParse(parts[1], out value))
+                {
+                    AssignVariable(variableName, value);
+                }
+                else
+                {
+                    throw new ArgumentException($"Invalid value for variable '{variableName}'.");
+                }
+            }
+            else
+            {
+                throw new ArgumentException("Invalid variable assignment syntax.");
+            }
+        }
+
+        #endregion
 
 
         private void DisplayMessage(string message)
