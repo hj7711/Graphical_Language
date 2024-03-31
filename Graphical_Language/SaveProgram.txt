@@ -1,6 +1,5 @@
-fill on
 x = 100
-if x == 100
-moveTo x,x
-endif
-circle 100
+rectangle x,x
+moveTo 200, 200
+x = x-50
+rectangle x,x

@@ -95,6 +95,7 @@ namespace Graphical_Language
             }
         }
 
+       
 
         public void CheckSyntex(string command)
         {
@@ -269,6 +270,68 @@ namespace Graphical_Language
                 return variables[name].Value;
             }
             throw new ArgumentException($"Variable '{name}' not found.");
+        }
+
+        private int HandleExpression(string expression)
+        {
+            string[] expressionParts = expression.Split(new char[] { '+', '-', '*', '/' });
+
+            string leftOperand = expressionParts[0].Trim();
+            string rightOperand = expressionParts[1].Trim();
+            char op = GetOperator(expression);
+
+            int leftValue;
+            int rightValue;
+
+            if (int.TryParse(leftOperand, out leftValue))
+            {
+                if (!int.TryParse(rightOperand, out rightValue))
+                {
+                    rightValue = GetVariableValue(rightOperand);
+                }
+            }
+            else
+            {
+                leftValue = GetVariableValue(leftOperand);
+                if (!int.TryParse(rightOperand, out rightValue))
+                {
+                    rightValue = GetVariableValue(rightOperand);
+                }
+            }
+
+            switch (op)
+            {
+                case '+':
+                    return leftValue + rightValue;
+                case '-':
+                    return leftValue - rightValue;
+                case '/':
+                    if (rightValue != 0)
+                    {
+                        return leftValue / rightValue;
+                    }
+                    else
+                    {
+                        throw new DivideByZeroException("Division by zero.");
+                    }
+                case '*':
+                    return leftValue * rightValue;
+                default:
+                    throw new ArgumentException($"Invalid operator: {op}");
+            }
+
+        }
+
+        private char GetOperator(string expression)
+        {
+            foreach (char c in expression)
+            {
+                if (c == '+' || c == '-' || c == '*' || c == '/')
+                {
+                    return c;
+                }
+            }
+            throw new ArgumentException("No operator found in the expression.");
         }
         #endregion
 
@@ -730,9 +793,15 @@ namespace Graphical_Language
             if (parts.Length == 2)
             {
                 string variableName = parts[0].Trim();
+                string expression = parts[1].Trim();
                 int value;
-                if (int.TryParse(parts[1], out value))
+                if (int.TryParse(expression, out value))
                 {
+                    AssignVariable(variableName, value);
+                }
+                else if (expression.Contains("+") || expression.Contains("-") || expression.Contains("*") || expression.Contains("/"))
+                {
+                    value = HandleExpression(expression);
                     AssignVariable(variableName, value);
                 }
                 else
