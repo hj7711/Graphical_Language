@@ -250,6 +250,44 @@ namespace UnitTestProject
 
 
 
+        /// <summary>
+        /// Tests the <see cref="CommandParser"/> class for setting the loop condition met flag to true with a valid loop condition.
+        /// </summary>
+        [TestMethod]
+        public void ExecuteLoopCommand_ValidCondition_ShouldSetLoopConditionMetToTrue()
+        {
+            // Arrange
+            CommandParser commandParser = CommandParser.Instance;
+            commandParser.AssignVariable("x", 5);
+            string loopcondition = "while x < 10";// Example loop condition: while x < 10
+
+            // Act
+            commandParser.ParseAndExecute(loopcondition);
+
+            // Assert
+            Assert.IsTrue(commandParser.LoopConditionMet, "Loop condition should be met when x < 10.");
+        }
+
+
+        /// <summary>
+        /// Tests the <see cref="CommandParser"/> class for throwing an exception with an invalid loop condition.
+        /// </summary>
+        [TestMethod]
+        public void ExecuteLoopCommand_InvalidCondition_ShouldThrowArgumentException()
+        {
+            // Arrange
+            CommandParser commandParser = CommandParser.Instance;
+            string loopcondition = "while invalid"; // Example invalid loop condition: while invalid
+
+            // Act & Assert
+            Assert.ThrowsException<ArgumentException>(() =>
+            {
+                commandParser.ParseAndExecute(loopcondition);
+            });
+        }
+
+
+
 
         /// <summary>
         /// Test method to ensure that executing the 'rectangle' command with invalid parameters throws an ArgumentException.
