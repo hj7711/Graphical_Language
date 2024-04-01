@@ -1,5 +1,4 @@
-x = 100
-rectangle x,x
-moveTo 200, 200
-x = x-50
-rectangle x,x
+count = 1
+while count <  3
+circle 10
+count = count + 1

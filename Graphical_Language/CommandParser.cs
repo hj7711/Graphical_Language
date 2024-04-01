@@ -29,6 +29,12 @@ namespace Graphical_Language
         private Stack<string> IfStack = new Stack<string>();
 
         public bool IfConditionMet;
+
+        private Stack<string> LoopStack = new Stack<string>();
+
+        public bool LoopConditionMet;
+
+        List<string> LoopCommands = new List<string>();
         public static CommandParser Instance
         {
             get
@@ -88,8 +94,17 @@ namespace Graphical_Language
                     case "if":
                         ExecuteIfCommand(words);
                         break;
+                    case "while":
+                        ExecuteLoopCommand(words);
+                        break;
+                    case "endif":
+                        endifMethod();
+                        break;
+                    case "endloop":
+                        endloopMethod();
+                        break;
                     default:
-                        throw new ArgumentException("invalidcommand");
+                        throw new ArgumentException("invalidcommand : " + keyword);
                         break;
                 }
             }
@@ -191,20 +206,41 @@ namespace Graphical_Language
                 {
                     string trimmedLine = line.Trim();
 
-                    if (trimmedLine.StartsWith("if"))
+                    if (trimmedLine.StartsWith("while"))
+                    {
+                        ParseAndExecute(trimmedLine);
+                        if (LoopCommands.Count == 0)
+                        {
+                            LoopStack.Push(trimmedLine);
+                        }
+                        
+                    }
+                    else if (trimmedLine.StartsWith("endloop"))
+                    {
+                        endloopMethod();
+                    }
+                    else if (LoopConditionMet)
+                    {
+                        ParseAndExecute(trimmedLine);
+                        LoopCommands.Add(trimmedLine);
+                    }
+
+
+                    else if (trimmedLine.StartsWith("if"))
                     {
                         ParseAndExecute(trimmedLine);
                         IfStack.Push(trimmedLine);
                     }
-                    else if(trimmedLine.StartsWith("endif"))
+                    else if (trimmedLine.StartsWith("endif"))
                     {
-                        IfStack.Pop();
+                        endifMethod();
                     }
-                    else if(IfConditionMet)
+                    else if (IfConditionMet)
                     {
                         ParseAndExecute(trimmedLine);
                     }
-                    else if(IfStack.Count == 0)
+                    
+                    else if (IfStack.Count == 0 && LoopStack.Count == 0)
                     {
                         ParseAndExecute(trimmedLine);
                     }
@@ -213,6 +249,11 @@ namespace Graphical_Language
                 if(IfStack.Count > 0)
                 {
                     DisplayMessage($"Error executing program: no endif found");
+                }
+
+                if (LoopStack.Count > 0)
+                {
+                    DisplayMessage($"Error executing program: no endloop found");
                 }
             }
             catch (Exception ex)
@@ -867,6 +908,19 @@ namespace Graphical_Language
             IfConditionMet = EvaluateCondition(leftValue, op, rightValue);
         }
 
+
+        void endifMethod()
+        {
+            if(IfStack.Count > 0)
+            {
+                IfStack.Pop();
+            }
+            else
+            {
+                throw new ArgumentException("invalidcommand : no if condition found for endif");
+            }
+        }
+
         private bool EvaluateCondition(int value1, string op, int value2)
         {
             switch (op)
@@ -891,6 +945,87 @@ namespace Graphical_Language
 
         #endregion
 
+        #region loop
+        /// <summary>
+        /// Parses and evaluates the loop condition specified in the provided words array.
+        /// </summary>
+        /// <param name="words">An array containing the loop condition and its components.</param>
+        /// <exception cref="ArgumentException">Thrown when the condition syntax is invalid.</exception>
+        private void ExecuteLoopCommand(string[] words)
+        {
+            string condition = string.Join(" ", words.Skip(1));
+
+            string[] conditionParts = Regex.Split(condition, @"\s*(==|!=|<=|>=|<|>)\s*");
+
+            if (conditionParts.Length != 3)
+            {
+                throw new ArgumentException("Invalid condition syntax.");
+            }
+
+
+            string leftOperand = conditionParts[0].Trim();
+            string op = conditionParts[1].Trim();
+            string rightOperand = conditionParts[2].Trim();
+
+            int leftValue;
+            int rightValue;
+
+            // Check if the left operand is a variable
+            if (int.TryParse(leftOperand, out leftValue))
+            {
+                // Left operand is a constant, try to parse the right operand as a variable
+                if (!int.TryParse(rightOperand, out rightValue))
+                {
+                    rightValue = GetVariableValue(rightOperand);
+                }
+            }
+            else
+            {
+                // Left operand is a variable, parse its value
+                leftValue = GetVariableValue(leftOperand);
+
+                // Try to parse the right operand as a variable or constant
+                if (!int.TryParse(rightOperand, out rightValue))
+                {
+                    rightValue = GetVariableValue(rightOperand);
+                }
+            }
+
+            LoopConditionMet = EvaluateCondition(leftValue, op, rightValue);
+        }
+
+
+        void endloopMethod()
+        {
+            if (LoopStack.Count > 0)
+            {
+                while (true)
+                {
+                    string loopcondition = LoopStack.Peek();
+                    ParseAndExecute(loopcondition);
+                    if (!LoopConditionMet)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        for (int i = 0; i < LoopCommands.Count; i++)
+                        {
+                            ParseAndExecute(LoopCommands[i]);
+                        }
+                    }
+                }
+
+                LoopStack.Pop();
+                LoopCommands.Clear();
+            }
+            else
+            {
+                throw new ArgumentException("invalidcommand : no while condition found for endloop");
+            }
+            
+        }
+        #endregion
 
         private void DisplayMessage(string message)
         {
